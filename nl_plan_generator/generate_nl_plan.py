@@ -5,7 +5,7 @@ from pathlib import Path
 from llmcaller import LocalLLMCaller
 
 BASE_DIR = Path(__file__).resolve().parent
-
+PROJECT_ROOT = BASE_DIR.parent
 
 def read_file(path: Path) -> str:
     return path.read_text(encoding="utf-8")
@@ -15,7 +15,7 @@ def main():
     model_name = os.getenv("MODEL_NAME", "local:Qwen/Qwen3-4B-Instruct-2507")
     llm = LocalLLMCaller(model=model_name)
 
-    sample_plan = read_file(BASE_DIR / "data" / "sample.plan")
+    sample_plan = read_file(PROJECT_ROOT / "data" / "inputs" / "sample.plan")
     prompt_template = read_file(BASE_DIR / "prompts" / "pddl_to_nl.txt")
 
     full_prompt = prompt_template.replace("{{PDDL_PLAN}}", sample_plan)
@@ -38,7 +38,7 @@ def main():
     except json.JSONDecodeError as exc:
         raise RuntimeError(f"LLM returned invalid JSON: {exc}\nRaw output:\n{raw_output}") from exc
 
-    output_path = BASE_DIR / "data" / "output.json"
+    output_path = PROJECT_ROOT / "data" / "nlplan" / "output.json"
     output_path.write_text(json.dumps(parsed, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(json.dumps(parsed, ensure_ascii=False, indent=2))

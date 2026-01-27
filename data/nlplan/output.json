@@ -1,0 +1,63 @@
+{
+  "steps": [
+    {
+      "step": 0,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_gmail_icon",
+        "from": "home",
+        "to": "s_gmail_inbox"
+      },
+      "description": "Click navigate to go from home to s_gmail_inbox."
+    },
+    {
+      "step": 1,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_daniel_most_recent_email",
+        "from": "s_gmail_inbox",
+        "to": "s_email_daniel_most_recent"
+      },
+      "description": "Click navigate to go from s_gmail_inbox to s_email_daniel_most_recent."
+    },
+    {
+      "step": 2,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_reply_button",
+        "from": "s_email_daniel_most_recent",
+        "to": "s_reply_compose"
+      },
+      "description": "Click navigate to go from s_email_daniel_most_recent to s_reply_compose."
+    },
+    {
+      "step": 3,
+      "action": "click_focus_field",
+      "args": {
+        "field": "t_body_field",
+        "location": "s_reply_compose",
+        "focus": "f_body"
+      },
+      "description": "Focus the body field in s_reply_compose."
+    },
+    {
+      "step": 4,
+      "action": "input_text",
+      "args": {
+        "field": "f_body",
+        "text": "txt_reply_to_daniel_10am_thu"
+      },
+      "description": "Enter the text 'txt_reply_to_daniel_10am_thu' into the body field."
+    },
+    {
+      "step": 5,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_send_button",
+        "from": "s_reply_compose",
+        "to": "s_gmail_sent"
+      },
+      "description": "Click navigate to send the email from s_reply_compose to s_gmail_sent."
+    }
+  ]
+}
