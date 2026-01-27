@@ -1,0 +1,50 @@
+{
+  "steps": [
+    {
+      "step": 0,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_search_icon",
+        "source": "home",
+        "search": "s_search"
+      },
+      "description": "Clicks on the search icon to navigate to the search page from home."
+    },
+    {
+      "step": 1,
+      "action": "click_focus_field",
+      "args": {
+        "field": "t_search_field",
+        "search": "s_search",
+        "input": "f_query"
+      },
+      "description": "Focuses the search field to prepare for inputting the query."
+    },
+    {
+      "step": 2,
+      "action": "input_text",
+      "args": {
+        "field": "f_query",
+        "text": "txt_pddl"
+      },
+      "description": "Inputs the text 'txt_pddl' into the search query field."
+    },
+    {
+      "step": 3,
+      "action": "navigate_back",
+      "args": {
+        "source": "s_search",
+        "destination": "home"
+      },
+      "description": "Navigates back from the search page to the home page."
+    },
+    {
+      "step": 4,
+      "action": "status",
+      "args": {
+        "state": "complete"
+      },
+      "description": "The operation is marked as complete."
+    }
+  ]
+}

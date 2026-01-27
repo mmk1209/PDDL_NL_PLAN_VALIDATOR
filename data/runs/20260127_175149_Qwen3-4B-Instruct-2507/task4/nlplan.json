@@ -1,0 +1,145 @@
+{
+  "steps": [
+    {
+      "step": 0,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_contacts_icon",
+        "from": "home",
+        "to": "s_contacts"
+      },
+      "description": "Click on contacts icon to navigate to contacts page."
+    },
+    {
+      "step": 1,
+      "action": "scroll",
+      "args": {
+        "direction": "down",
+        "container": "s_contacts",
+        "target": "s_contacts_list"
+      },
+      "description": "Scroll down in contacts list to find relevant contact entries."
+    },
+    {
+      "step": 2,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_alice_entry",
+        "from": "s_contacts_list",
+        "to": "s_contact_alice"
+      },
+      "description": "Navigate to Alice's contact entry in the contacts list."
+    },
+    {
+      "step": 3,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_message_button",
+        "from": "s_contact_alice",
+        "to": "s_message_editor"
+      },
+      "description": "Click on message button to open the message editor for Alice."
+    },
+    {
+      "step": 4,
+      "action": "mcp_call",
+      "args": {
+        "tool": "tool_llm",
+        "function": "par_generate_reply",
+        "output": "d_reply_text"
+      },
+      "description": "Call LLM to generate a reply message for Alice."
+    },
+    {
+      "step": 5,
+      "action": "make_text_ready_from_deliverable",
+      "args": {
+        "deliverable": "d_reply_text",
+        "output": "txt_auto_reply"
+      },
+      "description": "Prepare the generated reply text for use in the message field."
+    },
+    {
+      "step": 6,
+      "action": "click_focus_field",
+      "args": {
+        "target": "t_body_field",
+        "from": "s_message_editor",
+        "field": "f_body"
+      },
+      "description": "Focus the body text field in the message editor."
+    },
+    {
+      "step": 7,
+      "action": "input_text",
+      "args": {
+        "field": "f_body",
+        "text": "txt_auto_reply"
+      },
+      "description": "Enter the auto-generated reply text into the message body."
+    },
+    {
+      "step": 8,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_send_button",
+        "from": "s_message_editor",
+        "to": "s_sent"
+      },
+      "description": "Send the message to Alice by clicking the send button."
+    },
+    {
+      "step": 9,
+      "action": "navigate_back",
+      "args": {
+        "from": "s_sent",
+        "to": "s_message_editor"
+      },
+      "description": "Navigate back from sent message to the message editor."
+    },
+    {
+      "step": 10,
+      "action": "navigate_back",
+      "args": {
+        "from": "s_message_editor",
+        "to": "s_contact_alice"
+      },
+      "description": "Navigate back from Alice's contact to the contact list."
+    },
+    {
+      "step": 11,
+      "action": "navigate_back",
+      "args": {
+        "from": "s_contact_alice",
+        "to": "s_contacts_list"
+      },
+      "description": "Navigate back from contact list to the main contacts list."
+    },
+    {
+      "step": 12,
+      "action": "navigate_back",
+      "args": {
+        "from": "s_contacts_list",
+        "to": "s_contacts"
+      },
+      "description": "Navigate back from contacts list to the main screen."
+    },
+    {
+      "step": 13,
+      "action": "navigate_back",
+      "args": {
+        "from": "s_contacts",
+        "to": "home"
+      },
+      "description": "Return to the home screen after completing the interaction."
+    },
+    {
+      "step": 14,
+      "action": "status",
+      "args": {
+        "value": "complete"
+      },
+      "description": "Mark the task as completed."
+    }
+  ]
+}

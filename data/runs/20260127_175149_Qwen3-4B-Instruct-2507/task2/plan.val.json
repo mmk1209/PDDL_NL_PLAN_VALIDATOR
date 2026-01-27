@@ -1,0 +1,8 @@
+{
+  "plan_path": "/home/laq/code/ToolPlan/data/runs/20260127_175149_Qwen3-4B-Instruct-2507/task2/plan.plan",
+  "success": true,
+  "exit_code": 0,
+  "stdout": "Checking plan: /home/laq/code/ToolPlan/data/runs/20260127_175149_Qwen3-4B-Instruct-2507/task2/plan.plan\nPlan executed successfully - checking goal\nPlan valid\nFinal value: 6 \n\nSuccessful plans:\nValue: 6\n /home/laq/code/ToolPlan/data/runs/20260127_175149_Qwen3-4B-Instruct-2507/task2/plan.plan 6",
+  "stderr": "",
+  "command": "validate /home/laq/code/ToolPlan/data/inputs/domain.pddl /home/laq/code/ToolPlan/data/inputs/task2/problem.pddl /home/laq/code/ToolPlan/data/runs/20260127_175149_Qwen3-4B-Instruct-2507/task2/plan.plan"
+}

@@ -1,0 +1,6 @@
+(click_navigate t_notes_icon home s_notes)
+(click_navigate t_new_note s_notes s_editor)
+(click_focus_field t_body_field s_editor f_body)
+(input_text f_body txt_hello)
+(click_navigate t_save_button s_editor s_saved)
+(status complete)

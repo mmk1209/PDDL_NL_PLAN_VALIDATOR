@@ -1,0 +1,5 @@
+(click_navigate t_search_icon home s_search)
+(click_focus_field t_search_field s_search f_query)
+(input_text f_query txt_pddl)
+(navigate_back s_search home)
+(status complete)

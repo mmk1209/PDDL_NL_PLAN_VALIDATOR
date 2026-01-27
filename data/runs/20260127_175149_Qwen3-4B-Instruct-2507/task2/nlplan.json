@@ -1,0 +1,53 @@
+{
+  "steps": [
+    {
+      "step": 0,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_notes_icon",
+        "from": "home",
+        "to": "s_notes"
+      },
+      "description": "Navigate from home to the notes app by clicking the notes icon."
+    },
+    {
+      "step": 1,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_new_note",
+        "from": "s_notes",
+        "to": "s_editor"
+      },
+      "description": "Navigate from the notes page to the new note editor by clicking the new note button."
+    },
+    {
+      "step": 2,
+      "action": "click_focus_field",
+      "args": {
+        "field": "t_body_field",
+        "screen": "s_editor",
+        "focus": "f_body"
+      },
+      "description": "Focus the body input field in the editor."
+    },
+    {
+      "step": 3,
+      "action": "input_text",
+      "args": {
+        "field": "f_body",
+        "text": "txt_hello"
+      },
+      "description": "Enter the text 'hello' into the body input field."
+    },
+    {
+      "step": 4,
+      "action": "click_navigate",
+      "args": {
+        "target": "t_save_button",
+        "from": "s_editor",
+        "to": "s_saved"
+      },
+      "description": "Navigate from the editor to the saved page by clicking the save button."
+    }
+  ]
+}

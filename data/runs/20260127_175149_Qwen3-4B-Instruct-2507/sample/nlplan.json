@@ -1,0 +1,63 @@
+{
+  "steps": [
+    {
+      "step": 0,
+      "action": "click_navigate",
+      "args": {
+        "agent": "t_gmail_icon",
+        "target": "home",
+        "destination": "s_gmail_inbox"
+      },
+      "description": "Click on the Gmail icon to navigate to the home page and open the inbox."
+    },
+    {
+      "step": 1,
+      "action": "click_navigate",
+      "args": {
+        "agent": "t_daniel_most_recent_email",
+        "source": "s_gmail_inbox",
+        "destination": "s_email_daniel_most_recent"
+      },
+      "description": "Navigate to Daniel's most recent email from the inbox."
+    },
+    {
+      "step": 2,
+      "action": "click_navigate",
+      "args": {
+        "agent": "t_reply_button",
+        "source": "s_email_daniel_most_recent",
+        "destination": "s_reply_compose"
+      },
+      "description": "Click the reply button to compose a new reply to Daniel's most recent email."
+    },
+    {
+      "step": 3,
+      "action": "click_focus_field",
+      "args": {
+        "field": "t_body_field",
+        "source": "s_reply_compose",
+        "focus": "f_body"
+      },
+      "description": "Focus the body field in the reply composition window."
+    },
+    {
+      "step": 4,
+      "action": "input_text",
+      "args": {
+        "field": "f_body",
+        "text": "txt_reply_to_daniel_10am_thu"
+      },
+      "description": "Enter the message 'txt_reply_to_daniel_10am_thu' in the body of the reply."
+    },
+    {
+      "step": 5,
+      "action": "click_navigate",
+      "args": {
+        "agent": "t_send_button",
+        "source": "s_reply_compose",
+        "destination": "s_gmail_sent"
+      },
+      "description": "Click the send button to send the reply to Daniel."
+    }
+  ]
+}

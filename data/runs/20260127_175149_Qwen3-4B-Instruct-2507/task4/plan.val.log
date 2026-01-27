@@ -1,0 +1,13 @@
+time: 2026-01-27T17:53:23.104687
+command: validate /home/laq/code/ToolPlan/data/inputs/domain.pddl /home/laq/code/ToolPlan/data/inputs/task4/problem.pddl /home/laq/code/ToolPlan/data/runs/20260127_175149_Qwen3-4B-Instruct-2507/task4/plan.plan
+exit_code: 0
+
+--- stdout ---
+Checking plan: /home/laq/code/ToolPlan/data/runs/20260127_175149_Qwen3-4B-Instruct-2507/task4/plan.plan
+Plan executed successfully - checking goal
+Plan valid
+Final value: 15 
+
+Successful plans:
+Value: 15
+ /home/laq/code/ToolPlan/data/runs/20260127_175149_Qwen3-4B-Instruct-2507/task4/plan.plan 15
