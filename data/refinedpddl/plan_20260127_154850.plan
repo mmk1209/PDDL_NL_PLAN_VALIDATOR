@@ -1,0 +1,7 @@
+(click_navigate home)
+(click_navigate)
+(click_navigate)
+(click_focus_field t_body_field f_body)
+(input_text f_body txt_reply_to_daniel_10am_thu)
+(click_navigate)
+(status complete)

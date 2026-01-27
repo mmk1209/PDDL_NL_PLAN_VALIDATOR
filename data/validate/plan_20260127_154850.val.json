@@ -1,0 +1,8 @@
+{
+  "plan_path": "data/refinedpddl/plan_20260127_154850.plan",
+  "success": true,
+  "exit_code": 0,
+  "stdout": "Checking plan: data/refinedpddl/plan_20260127_154850.plan\nBad plan description!\n\n\nFailed plans:\n data/refinedpddl/plan_20260127_154850.plan",
+  "stderr": "",
+  "command": "validate data/inputs/domain.pddl data/inputs/problem.pddl data/refinedpddl/plan_20260127_154850.plan"
+}

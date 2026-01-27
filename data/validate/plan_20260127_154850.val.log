@@ -1,0 +1,11 @@
+time: 2026-01-27T15:48:50.253003
+command: validate data/inputs/domain.pddl data/inputs/problem.pddl data/refinedpddl/plan_20260127_154850.plan
+exit_code: 0
+
+--- stdout ---
+Checking plan: data/refinedpddl/plan_20260127_154850.plan
+Bad plan description!
+
+
+Failed plans:
+ data/refinedpddl/plan_20260127_154850.plan

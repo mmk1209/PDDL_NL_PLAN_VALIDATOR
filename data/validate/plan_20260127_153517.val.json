@@ -1,8 +1,0 @@
-{
-  "plan_path": "data/refinedpddl/plan_20260127_153517.plan",
-  "success": true,
-  "exit_code": 0,
-  "stdout": "Checking plan: data/refinedpddl/plan_20260127_153517.plan\nPlan executed successfully - checking goal\nPlan valid\nFinal value: 7 \n\nSuccessful plans:\nValue: 7\n data/refinedpddl/plan_20260127_153517.plan 7",
-  "stderr": "",
-  "command": "validate data/inputs/domain.pddl data/inputs/problem.pddl data/refinedpddl/plan_20260127_153517.plan"
-}
