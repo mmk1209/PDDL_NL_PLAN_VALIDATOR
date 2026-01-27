@@ -1,0 +1,8 @@
+python-dotenv
+openai>=1.2.0
+litellm
+anthropic
+torch
+transformers
+accelerate
+sentencepiece

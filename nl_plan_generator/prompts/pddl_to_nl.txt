@@ -1,0 +1,44 @@
+You are given a PDDL planner output. Convert it into a normalized JSON natural-language plan.
+
+Rules:
+- Output MUST be valid JSON only; no extra text.
+- Schema:
+  {
+    "steps": [
+      {
+        "step": int,
+        "action": string,          // must match PDDL action exactly
+        "args": object,            // keys must match PDDL parameter names/positions meaningfully
+        "description": string      // brief natural language description
+      }
+    ]
+  }
+- Do not change action names or parameter names.
+- If unsure, keep the original token unchanged.
+- Never include prose outside JSON.
+
+Example:
+Input:
+0: (move robot room_a room_b)
+1: (pick robot box_a room_b)
+
+Output:
+{
+  "steps": [
+    {
+      "step": 0,
+      "action": "move",
+      "args": {"agent": "robot", "from": "room_a", "to": "room_b"},
+      "description": "Robot moves from room_a to room_b."
+    },
+    {
+      "step": 1,
+      "action": "pick",
+      "args": {"agent": "robot", "object": "box_a", "location": "room_b"},
+      "description": "Robot picks up box_a in room_b."
+    }
+  ]
+}
+
+Now convert the following plan:
+{{PDDL_PLAN}}

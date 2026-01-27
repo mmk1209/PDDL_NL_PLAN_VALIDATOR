@@ -1,0 +1,7 @@
+; Valid-executable plan but does not reach goal
+(click_navigate t_gmail_icon home s_gmail_inbox)
+(click_navigate t_daniel_most_recent_email s_gmail_inbox s_email_daniel_most_recent)
+(click_navigate t_reply_button s_email_daniel_most_recent s_reply_compose)
+(click_focus_field t_body_field s_reply_compose f_body)
+(input_text f_body txt_reply_to_daniel_10am_thu)
+(status complete)

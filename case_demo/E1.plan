@@ -1,0 +1,6 @@
+; Invalid plan (has multiple steps but contains an error)
+(click_navigate t_gmail_icon home s_gmail_inbox)
+(click_navigate t_daniel_most_recent_email s_gmail_inbox s_email_daniel_most_recent)
+(input_text f_body txt_reply_to_daniel_10am_thu)
+(click_navigate t_send_button s_reply_compose s_gmail_sent)
+(status complete)
