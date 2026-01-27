@@ -7,27 +7,6 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 
-# -------------------------
-# Plan construction helpers
-# -------------------------
-
-ACTION_ARG_ORDER = {
-    # domain-specific ordering
-    "click_navigate": ["target", "from", "to"],
-    "double_tap_navigate": ["target", "from", "to"],
-    "long_press_navigate": ["target", "from", "to"],
-    "drag_navigate": ["target1", "target2", "from", "to"],
-    "scroll_navigate": ["direction", "from", "to"],
-
-    "click_focus_field": ["field", "location", "focus"],  # JSON keys -> (?t ?s ?f)
-    "double_tap_focus_field": ["field", "location", "focus"],
-    "long_press_focus_field": ["field", "location", "focus"],
-
-    "input_text": ["field", "text"],  # (?f ?txt)
-    "status": ["goal_status"],
-}
-
-
 def load_steps(json_path: str) -> List[Dict[str, Any]]:
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -48,13 +27,8 @@ def format_action(action: str, args: Dict[str, Any]) -> str:
     if args is None:
         args = {}
 
-    # 优先使用预定义顺序，否则按 JSON 原有顺序
-    ordered_keys = ACTION_ARG_ORDER.get(action)
-    if ordered_keys:
-        # 过滤掉缺失字段，允许 JSON 中缺省
-        arg_values = [args[k] for k in ordered_keys if k in args]
-    else:
-        arg_values = list(args.values())
+    # 保留 JSON 中的键顺序（Python3.7+ dict 保序）
+    arg_values = list(args.values())
 
     parts = [action] + [str(v) for v in arg_values]
     return f"({ ' '.join(parts) })"

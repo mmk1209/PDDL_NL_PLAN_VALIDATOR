@@ -28,7 +28,7 @@
         "source": "s_email_daniel_most_recent",
         "destination": "s_reply_compose"
       },
-      "description": "Click the reply button to compose a new reply to Daniel's email."
+      "description": "Click the reply button to compose a new reply to Daniel's most recent email."
     },
     {
       "step": 3,
@@ -57,7 +57,7 @@
         "source": "s_reply_compose",
         "destination": "s_gmail_sent"
       },
-      "description": "Click the send button to send the reply to Daniel."
+      "description": "Click the send button to send the reply to Daniel's email."
     }
   ]
 }

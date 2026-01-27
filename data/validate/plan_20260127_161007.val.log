@@ -1,0 +1,13 @@
+time: 2026-01-27T16:10:07.617884
+command: validate data/inputs/domain.pddl data/inputs/problem.pddl data/refinedpddl/plan_20260127_161007.plan
+exit_code: 0
+
+--- stdout ---
+Checking plan: data/refinedpddl/plan_20260127_161007.plan
+Plan executed successfully - checking goal
+Plan valid
+Final value: 7 
+
+Successful plans:
+Value: 7
+ data/refinedpddl/plan_20260127_161007.plan 7
