@@ -57,7 +57,7 @@
         "source": "s_reply_compose",
         "destination": "s_gmail_sent"
       },
-      "description": "Click the send button to send the reply to Daniel's email."
+      "description": "Click the send button to send the reply to Daniel."
     }
   ]
 }

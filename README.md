@@ -4,35 +4,56 @@
 本仓库围绕“把 PDDL 规划转成可读自然语言步骤，并用 VAL 校验规划”的实验流程，包含一个本地 LLM 转换脚本和一个验证示例。
 
 ## 目录结构
-- `nl_plan_generator/`：PDDL→自然语言 JSON 转换脚本与提示词。
-- `case_demo/`：使用 VAL 的验证示例（含错误分类说明与样例 plan）。
-- `run_qwen.py`：最小化的 Qwen 本地推理示例。
-- `archive/`：旧版 PDDL 域/问题文件。
+- `demo.py`：一键跑“NL 计划生成 → PDDL & VAL 验证”，默认批量处理 `data/inputs`。
+- `nl_plan_generator/`：PDDL→自然语言 JSON 转换脚本与提示词，现支持批处理并复用同一 LLM 实例。
+- `nl_plan_validator/`：将 NL JSON 生成 PDDL plan 并用 VAL 验证。
+- `case_demo/`：VAL 的独立示例与错误分类说明。
+- `data/`：输入与输出根目录，默认输入放在 `data/inputs/<case>/`，输出归档到 `data/runs/<run_id>/<case>/`。
 
 ## 环境依赖
 - Python 3.10+；推荐 GPU（Qwen 默认跑在 CUDA）。
 - 依赖列表见 `nl_plan_generator/requirements.txt`：`torch`、`transformers`、`accelerate`、`sentencepiece`、`python-dotenv` 等。
 - 若需运行 VAL，请确保系统已安装 `validate` 命令（如 Fast Downward / VAL 套件）。
 
-## 工作流 1：PDDL 计划 → 自然语言 JSON
-1) 安装依赖：`pip install -r nl_plan_generator/requirements.txt`。
-2) 可在环境变量指定模型：`MODEL_NAME="local:Qwen/Qwen3-4B-Instruct-2507"`（默认），模型使用 `transformers` 本地加载。
-3) 运行：`python nl_plan_generator/generate_nl_plan.py`。
-4) 脚本逻辑（见 `nl_plan_generator/generate_nl_plan.py`）：读取样例计划 `data/sample.plan` 与提示词 `prompts/pddl_to_nl.txt`，调用 `LocalLLMCaller` 生成 JSON，写入并打印 `data/output.json`，同时输出 token 统计。
-5) 提示词约束：仅输出 JSON，`steps` 数组中包含 `step`/`action`/`args`/`description` 字段，动作名与参数名保持原样。
+## 快速开始：一键流水线（推荐）
+默认模型：环境变量 `MODEL_NAME`（若未设，demo 里用 `local:Qwen/Qwen3-4B-Instruct-2507`）。
 
-## 工作流 2：VAL 计划验证示例
-1) 参考 `case_demo/run_validate.py`：遍历 `problem/` 与 `plan/` 目录的配对文件，执行 `validate -v domain.pddl <problem> <plan>`。
-2) 运行：在有 `validate` 的环境中执行 `python case_demo/run_validate.py`（如需使用仓库自带的 `case_demo/domain.pddl`、`case_demo/problem.pddl`，请按脚本常量把文件放入 `problem/`、`plan/` 目录或调整常量）。
-3) 输出：
-   - 原始日志：`case_demo/results/raw/<task_id>.json`
-   - 去重概要：`case_demo/results/dataset.jsonl`
-   - 汇总统计：`case_demo/results/summary.json`（含有效率与错误分布）
-4) 错误分类规则见 `case_demo/ERROR_TAXONOMY.md`：`valid`、`bad_plan`、`type_error`、`unsatisfied_precondition`、`unknown` 等。
-5) 示例解读见 `case_demo/plan_error_explanation.md`：`E1.plan` 前置条件不满足，`E2.plan` 可执行但未达成目标，`success.plan` 为正确闭环。
+1) 安装依赖：`pip install -r nl_plan_generator/requirements.txt`
+2) 放置输入：在 `data/inputs/<case>/` 下至少包含
+   - `problem.pddl`（必需）
+   - 计划文件：`plan.plan` / `planner.plan` / `sample.plan` / `input.plan`（或任意 `.plan`）
+   - 可选 `prompt.txt`（否则用全局 `data/inputs/sample/prompt.txt`）
+   - 可选 `domain.pddl`（否则用全局 `data/inputs/domain.pddl`）
+3) 运行（批量，默认）：`python demo.py`
+   - 等价于 `python demo.py --batch-dir data/inputs --model local:Qwen/Qwen3-4B-Instruct-2507`
+   - 每个子目录视为一个 case，只加载一次模型，逐案生成 NL JSON 后再做 VAL 验证。
+4) 输出：`data/runs/<timestamp>_<model>/<case>/`
+   - `nlplan.json`：自然语言计划（生成阶段）
+   - `plan.plan`：还原的 PDDL plan（验证阶段）
+   - `*.val.log` / `*.val.json`：VAL 结果
 
+单案例运行
+- 强制单例：`python demo.py --single --plan data/inputs/sample/planner.plan --problem data/inputs/sample/problem.pddl --prompt data/inputs/sample/prompt.txt`
+- run_id 仍为 `时间戳_模型名`，输出位于 `data/runs/<run_id>/single/`。
 
-## 建议的后续补充
-- 在根目录新建 `problem/`、`plan/` 示例并更新脚本常量，便于开箱即用。
-- 在 README 中补充常见故障排查（显存不足、`validate` 安装指引）。
-- 可增加 Makefile/脚本一键串联“生成 NL plan → 还原/转换为 PDDL → VAL 验证”的端到端流程。
+验证开关
+- 默认运行 VAL；若只想生成 NL JSON：添加 `--no-validate`。
+- 不想自动追加 `(status complete)`：添加 `--no-status`（透传给验证脚本）。
+
+## 生成器（nl_plan_generator）单独使用
+- 单例：`python nl_plan_generator/generate_nl_plan.py --plan <plan> --prompt <prompt> --output <out>`
+- 批量复用模型：`python nl_plan_generator/generate_nl_plan.py --batch-dir data/inputs --run-id <run_id> --output-base data/runs`
+- 输出落在 `output-base/run-id/<case>/nlplan.json`。
+
+## 验证器（nl_plan_validator）单独使用
+- `python nl_plan_validator/generate_and_validate.py --input <nlplan.json> --domain <domain.pddl> --problem <problem.pddl> --outdir <dir> --logdir <dir>`
+- 可用 `--no-validate` 仅生成 plan，不跑 VAL。
+
+## 依赖与工具
+- Python 3.10+，本地 LLM 通过 `LocalLLMCaller`（Transformers）。
+- VAL：需要系统可执行 `validate`。
+- 依赖见 `nl_plan_generator/requirements.txt`。
+
+## case_demo（保留示例）
+- `case_demo/run_validate.py` 展示 VAL 使用方式。
+- 错误分类见 `case_demo/ERROR_TAXONOMY.md`，案例说明见 `case_demo/plan_error_explanation.md`。
