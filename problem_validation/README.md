@@ -9,6 +9,7 @@
 - `nl_plan_validator/`：将 NL JSON 生成 PDDL plan 并用 VAL 验证。
 - `case_demo/`：VAL 的独立示例与错误分类说明。
 - `data/`：输入与输出根目录，默认输入放在 `data/inputs/<case>/`，输出归档到 `data/runs/<run_id>/<case>/`。
+- `problem_validation/`：从自然语言任务描述生成 problem.pddl 的独立 demo（支持 LLM 直生与模板兜底）。
 
 ## 环境依赖
 - Python 3.10+；推荐 GPU（Qwen 默认跑在 CUDA）。
@@ -53,6 +54,23 @@
 - Python 3.10+，本地 LLM 通过 `LocalLLMCaller`（Transformers）。
 - VAL：需要系统可执行 `validate`。
 - 依赖见 `nl_plan_generator/requirements.txt`。
+
+## Problem Validation Demo（problem_validation）
+目标：给定 `prompt.txt`（用户任务）和 `domain.pddl`，生成合法的 `problem.pddl` 并通过 VAL。
+
+运行方式（默认模板模式）：
+- `python problem_validation/generate_problem.py` 或显式 `--mode template`
+  - LLM 只产 JSON `{ "problem_name": ... }`，用固定模板生成 PDDL；默认重试 2 次（名称解析或 VAL 失败时）。
+
+LLM 直生模式（可选）：
+- `python problem_validation/generate_problem.py --mode llm`
+  - LLM 直接输出 PDDL；若 quick check/VAL 失败，会提炼错误信息重试一次。
+  - 两次失败后自动降级到模板生成，保证有可演示的可通过版本（若 domain 本身无效则仍会失败）。
+
+重要说明：
+- 需要 `problem_validation/data/inputs/` 下的 `prompt.txt`、`domain.pddl`；`rules.txt`、`app.txt` 仅在 `--mode llm` 下用于提示。
+- 开始前会检查 `validate` 是否在 PATH，不存在则直接报错。
+- 生成/验证输出位于 `problem_validation/data/outputs/generated_problems/demo_problem.pddl`（可用 `--output` 覆盖）。
 
 ## case_demo（保留示例）
 - `case_demo/run_validate.py` 展示 VAL 使用方式。

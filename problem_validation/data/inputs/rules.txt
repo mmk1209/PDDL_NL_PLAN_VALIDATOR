@@ -1,0 +1,30 @@
+The system models user interaction with a mobile application composed of multiple screens.
+
+At any time, the user is located on exactly one screen.
+Each screen may contain visible UI targets and visible input fields.
+
+Navigation rules:
+- If a target is visible on the current screen and defines a transition, clicking it moves the user to another screen.
+- Some targets may support double-tap or long-press transitions.
+- Dragging between two visible targets may trigger a screen transition.
+- Scrolling in a direction may move to another screen.
+- The user may navigate back if a back-link exists between screens.
+- The user may always navigate to the home screen.
+
+Focus rules:
+- At most one input field can be focused at any time.
+- A field can only be focused if it is visible on the current screen.
+- When the screen changes, any focused field is cleared.
+
+Text rules:
+- Text can only be entered into a field when that field is focused.
+- Text can only be entered if the text is ready.
+- After text is entered, the field stores that text.
+
+Task rules:
+- The system may ask the user for information.
+- The system may answer using prepared text.
+- When a final status is set, the task is finalized and no further actions are allowed.
+
+Cost:
+- Every action increases the total execution cost by one.

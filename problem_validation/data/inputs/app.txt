@@ -1,0 +1,23 @@
+This application simulates a mobile user interface.
+
+The application provides the following interaction capabilities:
+
+Navigation:
+- Click a visible target to navigate to another screen.
+- Double-tap or long-press a target to navigate.
+- Drag between two targets to navigate.
+- Scroll in a direction to navigate.
+- Navigate back between linked screens.
+- Return to the home screen.
+
+Field interaction:
+- Focus a visible input field using a corresponding target.
+- Only one field can be focused at a time.
+
+Text handling:
+- Enter ready text into the focused field.
+- Answer using ready text.
+
+System control:
+- Ask the user for information.
+- Set a final status to complete the task.
