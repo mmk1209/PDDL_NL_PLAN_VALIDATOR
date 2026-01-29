@@ -118,6 +118,36 @@ CRITICAL PDDL SYNTAX RULES:
 - Every symbol must be declared with a type from the domain.
 - Declare directions explicitly if used (e.g., up down - direction).
 - Keep parentheses balanced; no extra comments.
+
+SEMANTIC REQUIREMENTS (VERY IMPORTANT):
+
+- The goal MUST NOT be satisfied by executing the `status` action alone.
+  A problem whose goal is only (status-set ...) is INVALID for this task.
+
+- The goal MUST include at least ONE task-related constraint derived from the domain, such as:
+  - being at a specific screen using (at-screen ?s)
+  - having text entered using (text-entered ?txt) or (field-has-text ?f ?txt)
+  - answering a text using (answered ?txt)
+
+- The initial state and objects MUST be constructed so that the above constraints are meaningful
+  and achievable using the actions in the domain.
+
+- The problem should require at least TWO actions to reach the goal
+  (i.e., not a trivial one-step solution).
+
+- All objects used in goal predicates MUST be declared in :objects with correct types.
+
+- The chosen goal constraints MUST reflect the user task, not arbitrary predicates.
+
+EXAMPLES OF INVALID GOALS:
+- (and (status-set success_status))
+- Any goal that can be satisfied without navigating, typing, or answering.
+
+EXAMPLES OF VALID GOALS:
+- (and (at-screen results_screen) (status-set success_status))
+- (and (field-has-text search_field query_text) (status-set success_status))
+- (and (answered result_text) (status-set success_status))
+
 """.strip()
 
 def run_val(domain: Path, problem: Path) -> Tuple[bool, str]:
@@ -184,13 +214,15 @@ The previously generated PDDL problem is INVALID.
 [VAL Error Output]
 {val_error}
 
-Instructions:
-- Diagnose the most likely causes of the VAL error.
-- Output ONLY a corrected problem.pddl (no explanations, no markdown, no comments).
-- Keep the task intent and goal as close as possible to the user task.
-- Do not invent predicates/types not in the domain.
-- Ensure the problem includes: (:domain mobileworld_generic)
-- Balance all parentheses; avoid quotes and comments.
+Instructions (follow all):
+- Fix ONLY the issues indicated by VAL / type errors; keep other structure unchanged.
+- Ensure :domain remains mobileworld_generic.
+- Do NOT introduce new predicates or types beyond the domain; all objects must use a domain type.
+- In :objects, every object MUST have a type using the form: obj1 obj2 - type (do not put types alone on a line).
+- If VAL reports "unknown type X", declare X in :objects with a valid domain type (do NOT treat object names as types).
+- If VAL reports "incorrectly typed", verify each predicate/action argument matches the domain signature and the object's declared type.
+- No comments, no markdown, balanced parentheses only.
+Output ONLY the corrected full problem.pddl.
 """.strip()
 
 
@@ -219,18 +251,51 @@ def extract_problem_pddl(text: str) -> str:
 
 
 def summarize_val_error(output: str) -> str:
-    """Pick most relevant VAL lines to reduce noise for LLM repair."""
+    """Pick key VAL lines plus a bit of context for LLM repair."""
 
     lines = [l.strip() for l in output.splitlines() if l.strip()]
-    key_lines = []
-    for l in lines:
+    key_idx = []
+    for i, l in enumerate(lines):
         ll = l.lower()
-        if "error" in ll or "errors:" in ll or "line" in ll or "parser" in ll:
-            key_lines.append(l)
-    # fallback: keep last few lines
-    if not key_lines:
-        key_lines = lines[-3:]
-    return "\n".join(key_lines[-6:])  # cap to recent 6 lines
+        if "error" in ll or "errors:" in ll or "parser" in ll or "line" in ll:
+            key_idx.append(i)
+    # collect context around matched lines
+    picked = []
+    for i in key_idx:
+        for j in range(max(0, i - 1), min(len(lines), i + 2)):
+            picked.append(lines[j])
+    if not picked:
+        picked = lines[-5:]  # fallback: last few lines
+    # dedup while preserving order
+    seen = set()
+    summary = []
+    for l in picked:
+        if l not in seen:
+            seen.add(l)
+            summary.append(l)
+    return "\n".join(summary)
+
+
+def extract_domain_types(domain_text: str) -> str:
+    """Very simple extractor to surface available types for repair prompts."""
+
+    lines = domain_text.splitlines()
+    types_block = []
+    capture = False
+    for line in lines:
+        if "(:types" in line:
+            capture = True
+            types_block.append(line)
+            continue
+        if capture:
+            types_block.append(line)
+            if ")" in line:
+                break
+    joined = " ".join(types_block)
+    # strip leading stuff
+    joined = joined.replace("(:types", "").replace(")", "")
+    tokens = [t for t in joined.split() if t != "-"]
+    return " ".join(tokens).strip()
 
 
 def quick_pddl_checks(text: str) -> Tuple[bool, str]:
@@ -315,11 +380,11 @@ def parse_args():
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--max-new-tokens", type=int, default=1024)
 
-    # ✅ 默认开启 verbose
+    # ✅ 默认关闭 verbose
     parser.add_argument(
         "--verbose",
         action="store_true",
-        default=True,
+        default=False,
         help="Print verbose info (enabled by default).",
     )
 
@@ -407,17 +472,21 @@ def main():
     )
 
     prompt = base_prompt
-    MAX_RETRIES = 2  # first try + one repair
+    MAX_RETRIES = 10  # first try + repairs (user preference)
     last_problem_text = None
     last_val_summary = ""
+    domain_types_hint = extract_domain_types(domain_text)
 
     for attempt in range(1, MAX_RETRIES + 1):
         print(f"\n🚀 Attempt {attempt} / {MAX_RETRIES}")
 
+        # lower temperature after first failure to reduce drift
+        temp = args.temperature if attempt == 1 else min(args.temperature, 0.05)
+
         responses, token_stats = llm.get_completion(
             prompt=prompt,
             system_instruction=system_prompt,
-            temperature=args.temperature,
+            temperature=temp,
             max_new_tokens=args.max_new_tokens,
         )
 
@@ -459,21 +528,27 @@ def main():
         print("🔍 Running VAL validation...")
         is_valid, val_output = run_val(args.domain, args.output)
 
-        print("========== VAL OUTPUT ==========")
-        print(val_output)
-        print("================================")
+        # print("========== VAL OUTPUT ==========")
+        # print(val_output)
+        # print("================================")
 
         if is_valid:
             print("✅ VAL validation PASSED.")
             return
 
         print("❌ VAL validation FAILED.")
-        last_val_summary = summarize_val_error(val_output)
+        # Use full VAL output for repair to avoid losing details
+        val_error_for_prompt = val_output
+        # If unknown type, append available types hint to help LLM repair
+        if "unknown type" in val_error_for_prompt.lower():
+            val_error_for_prompt += f"\nAvailable types: {domain_types_hint}"
+        print("⚠️ VAL Error (full log forwarded to LLM):")
+        print(summarize_val_error(val_output))
 
-        # Build repair prompt for next iteration if available
+        # Build repair prompt for next iteration
         prompt = build_repair_prompt(
             previous_problem=last_problem_text,
-            val_error=last_val_summary,
+            val_error=val_error_for_prompt,
             task_text=task_text,
             rules_text=rules_text,
             app_text=app_text,
