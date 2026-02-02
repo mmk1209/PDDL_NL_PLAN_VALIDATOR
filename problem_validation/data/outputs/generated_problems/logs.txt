@@ -1,0 +1,178 @@
+(pddlplan) laq@k8s-master:~/code/ToolPlan$ python problem_validation/generate_problem.py
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 398/398 [00:01<00:00, 254.15it/s, Materializing param=model.norm.weight]
+
+🚀 Attempt 1 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3589, 'completion_tokens': 335, 'total_tokens': 3924}
+🔍 Running VAL validation...
+❌ VAL validation FAILED.
+⚠️ VAL Error (full log forwarded to LLM):
+Object with unknown type: search_button
+Error: Error in type-checking!
+Errors: 1, warnings: 7
+
+🚀 Attempt 2 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3976, 'completion_tokens': 345, 'total_tokens': 4321}
+🔍 Running VAL validation...
+❌ VAL validation FAILED.
+⚠️ VAL Error (full log forwarded to LLM):
+Object with unknown type: down
+Error: Error in type-checking!
+Errors: 1, warnings: 5
+
+🚀 Attempt 3 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3985, 'completion_tokens': 350, 'total_tokens': 4335}
+🔍 Running VAL validation...
+❌ VAL validation FAILED.
+⚠️ VAL Error (full log forwarded to LLM):
+Type-checking make_text_ready_from_deliverable
+...action passes type checking.
+Type problem with proposition (mcp-produces data_deliverable result_text) - parameter 1 is incorrectly typed
+Type-checking initial state failed
+Type problem in problem specification!
+
+🚀 Attempt 4 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 4002, 'completion_tokens': 337, 'total_tokens': 4339}
+🔍 Running VAL validation...
+❌ VAL validation FAILED.
+⚠️ VAL Error (full log forwarded to LLM):
+Object with unknown type: query_param
+Error: Error in type-checking!
+Errors: 1, warnings: 3
+
+🚀 Attempt 5 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3978, 'completion_tokens': 345, 'total_tokens': 4323}
+🔍 Running VAL validation...
+❌ VAL validation FAILED.
+⚠️ VAL Error (full log forwarded to LLM):
+Object with unknown type: data_extractor
+Error: Error in type-checking!
+Errors: 1, warnings: 1
+
+🚀 Attempt 6 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3986, 'completion_tokens': 351, 'total_tokens': 4337}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 7 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 8 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 9 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 10 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 11 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 12 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 13 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 14 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 15 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 16 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 17 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 18 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 19 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+
+🚀 Attempt 20 / 20
+📝 Generated problem saved to: /home/laq/code/ToolPlan/problem_validation/data/outputs/generated_problems/problem.pddl
+Token stats: {'prompt_tokens': 3928, 'completion_tokens': 351, 'total_tokens': 4279}
+🔍 Running VAL validation...
+✅ VAL validation PASSED.
+🤖 Running planner...
+❌ Planner failed. Sending planner log to LLM for repair.
+⚠️ LLM mode failed after all retries; falling back to template mode for a valid PDDL.
+✅ Template fallback VAL validation PASSED.

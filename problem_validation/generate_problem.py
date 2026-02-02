@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import subprocess
+import shlex
 from pathlib import Path
 from typing import Tuple
 
@@ -118,6 +119,7 @@ CRITICAL PDDL SYNTAX RULES:
 - Every symbol must be declared with a type from the domain.
 - Declare directions explicitly if used (e.g., up down - direction).
 - Keep parentheses balanced; no extra comments.
+- Do NOT use any object name that appears in the domain :constants.
 
 SEMANTIC REQUIREMENTS (VERY IMPORTANT):
 
@@ -180,6 +182,19 @@ def run_val(domain: Path, problem: Path) -> Tuple[bool, str]:
     # fallback：如果没找到 Errors 行，就用 returncode
     return (proc.returncode == 0), proc.stdout.strip()
 
+
+def run_planner(domain: Path, problem: Path, planner_cmd: str, planner_args: str) -> Tuple[bool, str]:
+    """Run fast-downward (or given planner) and return success + log."""
+
+    cmd = [planner_cmd] + shlex.split(planner_args) + [str(domain), str(problem)]
+    proc = subprocess.run(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    return proc.returncode == 0, proc.stdout.strip()
+
 def sanitize_problem_name(name: str, fallback: str = "problem") -> str:
     """Return a safe problem name limited to [a-z0-9_], or fallback."""
 
@@ -215,12 +230,14 @@ The previously generated PDDL problem is INVALID.
 {val_error}
 
 Instructions (follow all):
-- Fix ONLY the issues indicated by VAL / type errors; keep other structure unchanged.
+- Fix the issues indicated by VAL / planner errors. You may modify any part of the problem (objects, init, goal) if needed, but keep the overall task intent unchanged. Do not introduce new predicates or types outside the domain.
 - Ensure :domain remains mobileworld_generic.
+- The corrected problem MUST be meaningfully different from the previous problem and must directly address the reported error. Do not repeat the same output.
 - Do NOT introduce new predicates or types beyond the domain; all objects must use a domain type.
 - In :objects, every object MUST have a type using the form: obj1 obj2 - type (do not put types alone on a line).
 - If VAL reports "unknown type X", declare X in :objects with a valid domain type (do NOT treat object names as types).
 - If VAL reports "incorrectly typed", verify each predicate/action argument matches the domain signature and the object's declared type.
+- You MUST only use predicates/actions that exist in the provided domain; do NOT invent new predicates (e.g., replace any unknown predicate like scroll-down with an existing one from the domain, such as scroll-transition).
 - No comments, no markdown, balanced parentheses only.
 Output ONLY the corrected full problem.pddl.
 """.strip()
@@ -366,8 +383,20 @@ def parse_args():
     parser.add_argument(
         "--mode",
         choices=["llm", "template"],
-        default="template",
-        help="Generation mode: template (default, LLM only names) or llm (direct PDDL).",
+        default="llm",
+        help="Generation mode: llm (direct PDDL) or template (default, LLM only names).",
+    )
+    parser.add_argument(
+        "--planner-cmd",
+        type=str,
+        default="fast-downward.py",
+        help="Planner executable (default: fast-downward.py in PATH).",
+    )
+    parser.add_argument(
+        "--planner-args",
+        type=str,
+        default="--alias lama-first",
+        help="Extra args for planner (default: --alias lama-first).",
     )
 
     # ✅ 模型参数
@@ -472,16 +501,22 @@ def main():
     )
 
     prompt = base_prompt
-    MAX_RETRIES = 10  # first try + repairs (user preference)
+    MAX_RETRIES = 20  # user preference for wider retries
     last_problem_text = None
     last_val_summary = ""
+    # We keep a type hint available for potential future use; not appended by default
     domain_types_hint = extract_domain_types(domain_text)
 
     for attempt in range(1, MAX_RETRIES + 1):
         print(f"\n🚀 Attempt {attempt} / {MAX_RETRIES}")
 
         # lower temperature after first failure to reduce drift
-        temp = args.temperature if attempt == 1 else min(args.temperature, 0.05)
+        if attempt == 1:
+            temp = 0.3
+        elif attempt < 5:
+            temp = 0.15
+        else:
+            temp = 0.08
 
         responses, token_stats = llm.get_completion(
             prompt=prompt,
@@ -534,14 +569,39 @@ def main():
 
         if is_valid:
             print("✅ VAL validation PASSED.")
-            return
+            # -----------------------
+            # Run planner (fast-downward)
+            # -----------------------
+            print("🤖 Running planner...")
+            ok_plan, planner_log = run_planner(
+                args.domain, args.output, args.planner_cmd, args.planner_args
+            )
+            # print("========== PLANNER OUTPUT ==========")
+            # print(planner_log)
+            # print("====================================")
+
+            if ok_plan:
+                print("✅ Planner solved the problem.")
+                return
+
+            print("❌ Planner failed. Sending planner log to LLM for repair.")
+            # Use planner log as error input
+            val_error_for_prompt = (
+                "Planner failed (fast-downward) log:\n" + planner_log
+            )
+            prompt = build_repair_prompt(
+                previous_problem=last_problem_text,
+                val_error=val_error_for_prompt,
+                task_text=task_text,
+                rules_text=rules_text,
+                app_text=app_text,
+                domain_text=domain_text,
+            )
+            continue
 
         print("❌ VAL validation FAILED.")
         # Use full VAL output for repair to avoid losing details
         val_error_for_prompt = val_output
-        # If unknown type, append available types hint to help LLM repair
-        if "unknown type" in val_error_for_prompt.lower():
-            val_error_for_prompt += f"\nAvailable types: {domain_types_hint}"
         print("⚠️ VAL Error (full log forwarded to LLM):")
         print(summarize_val_error(val_output))
 
@@ -556,7 +616,7 @@ def main():
         )
 
     # Fallback: auto-switch to template mode to guarantee a passing demo
-    print("⚠️ LLM mode failed twice; falling back to template mode for a valid PDDL.")
+    print("⚠️ LLM mode failed after all retries; falling back to template mode for a valid PDDL.")
     # reuse the template flow with one attempt
     fallback_name = sanitize_problem_name("fallback_demo")
     problem_pddl = PROBLEM_TEMPLATE.format(problem_name=fallback_name)
